@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 import models, schemas, auth
 from datetime import date
+import crud
 
 # --- КОРИСТУВАЧІ ---
 def get_user_by_email(db: Session, email: str):
@@ -14,7 +15,7 @@ def create_user(db: Session, user: schemas.UserModel):
     db.refresh(new_user)
     return new_user
 
-def update_token(user: models.User, token: str | None, db: Session):
+def update_token(db: Session, user: User, token: str | None):
     user.refresh_token = token
     db.commit()
 
