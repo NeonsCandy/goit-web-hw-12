@@ -1,7 +1,13 @@
+from django import db
 from sqlalchemy.orm import Session
 import models, schemas, auth
 from datetime import date
 import crud
+from models import Contact, User
+
+def update_token(user, token, db):
+    user.refresh_token = token
+    db.commit()
 
 # --- КОРИСТУВАЧІ ---
 def get_user_by_email(db: Session, email: str):
@@ -14,10 +20,6 @@ def create_user(db: Session, user: schemas.UserModel):
     db.commit()
     db.refresh(new_user)
     return new_user
-
-def update_token(db: Session, user: User, token: str | None):
-    user.refresh_token = token
-    db.commit()
 
 # --- КОНТАКТИ ---
 def create_contact(db: Session, contact: schemas.ContactCreate, user_id: int):
@@ -53,11 +55,9 @@ def delete_contact(db: Session, contact_id: int, user_id: int):
         db.commit()
     return db_contact
 
-def get_upcoming_birthdays(db: Session, user_id: int):
+def get_upcoming_birthdays(db: Session,user_id: int):
     contacts = db.query(models.Contact).filter(models.Contact.user_id == user_id).all()
-
-def get_upcoming_birthdays(db: Session):
-    contacts = db.query(models.Contact).all()
+    
     today = date.today()
     upcoming = []
     
